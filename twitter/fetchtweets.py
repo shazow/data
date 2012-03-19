@@ -79,7 +79,7 @@ if __name__ == '__main__':
     parser.add_argument('screen_name', metavar='SCREEN_NAME',
                         help='Twitter account to fetch from.')
 
-    parser.add_argument('out_filepath', metavar='OUT_FILE', default='out.json', nargs='?',
+    parser.add_argument('out_filepath', metavar='JSONS_FILE', default='out.jsons', nargs='?',
                         help='File to resume writing to (will read the last tweet to set default of `tweet_id`). [default: %default]')
 
     parser.add_argument('tweet_id', metavar='TWEET_ID', type=int, default=None, nargs='?',
