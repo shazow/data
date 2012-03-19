@@ -27,11 +27,11 @@ def serialize_status(s):
     return d
 
 
-def tweets_lookup_since(screen_name, tweet_id):
+def tweets_lookup_since(screen_name, tweet_id=None):
     "Stores results in memory until final return in order to reverse them chronologically."
     r = []
     for i, t in enumerate(tweepy.Cursor(api.user_timeline, screen_name=screen_name, count=200).items()):
-        if t.id <= tweet_id:
+        if tweet_id and t.id_str <= str(tweet_id):
             break
 
         r.append(serialize_status(t))
@@ -62,6 +62,7 @@ def main(screen_name, out_filepath, tweet_id=None):
                     pass
                 if line:
                     tweet_id = json.loads(line).get('id_str')
+                    log.info("Last tweet_id found in %s: %s", out_filepath, tweet_id)
         except IOError:
             pass
 
