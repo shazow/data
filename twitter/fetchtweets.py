@@ -47,6 +47,11 @@ def write_from_iterable(iter_tweets, out_fp):
         out_fp.write('\n')
 
 
+def read_to_iterable(fp):
+    for line in fp:
+        yield json.loads(line)
+
+
 def main(screen_name, out_filepath, tweet_id=None):
     if not tweet_id:
         try:
