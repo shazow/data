@@ -14,10 +14,15 @@ log = logging.getLogger(__name__)
 api = tweepy.API(retry_count=3, retry_delay=5)
 
 
+def prune_keys(d):
+    "Remove extraneous fields (empty, redundant, unserializable)."
+    prune_keys = ('author', 'user', '_api', 'created_at', 'retweeted_status', 'id')
+    return dict((k, v) for k, v in d.iteritems() if k not in prune_keys and v and not k.endswith('_id'))
+
+
 def serialize_status(s):
     "Return a JSONifiable dict. Removes extraneous fields."
-    prune_keys = ('author', 'user', '_api', 'created_at', 'retweeted_status', 'id')
-    d = dict((k, v) for k, v in s.__dict__.iteritems() if k not in prune_keys and v and not k.endswith('_id'))
+    d = prune_keys(s.__dict__)
     d['created_at'] = time.mktime(s.created_at.timetuple())
     return d
 
@@ -46,10 +51,12 @@ def main(screen_name, out_filepath, tweet_id=None):
     if not tweet_id:
         try:
             # Find the last tweet
+            line = None
             with open(out_filepath, 'r') as fp:
                 for line in fp:
                     pass
-                tweet_id = json.loads(line).get('id_str')
+                if line:
+                    tweet_id = json.loads(line).get('id_str')
         except IOError:
             pass
 
