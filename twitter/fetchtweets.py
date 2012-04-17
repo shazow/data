@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-# Copyright 2012 Andrey Petrov
+# Copyright 2012 Andrey Petrov <andrey.petrov@shazow.net>
 #
 # This module is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license.php
-'''
-Fetchtweets: Download thy tweets.
-(Requires tweepy)
-'''
+
+"""Download thy tweets. (Requires tweepy)"""
 
 __version__ = '1.0'
 
@@ -88,10 +86,12 @@ if __name__ == '__main__':
                         help='Twitter account to fetch from.')
 
     parser.add_argument('out_filepath', metavar='JSONS_FILE', default='out.jsons', nargs='?',
-                        help='File to resume writing to (will read the last tweet to set default of `tweet_id`). [default: %default]')
+                        help='File to resume writing to (will read the last tweet to set default of `tweet_id`).'
+                             '[default: %(default)s]')
 
     parser.add_argument('tweet_id', metavar='TWEET_ID', type=int, default=None, nargs='?',
-                        help='Start fetching after this tweet [default: last tweet in `out_filepath`]')
+                        help='Start fetching after this tweet'
+                             '[default: last tweet in `out_filepath`]')
 
     parser.add_argument('--verbose', '-v', action='count')
 
