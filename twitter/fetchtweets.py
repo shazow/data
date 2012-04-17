@@ -1,12 +1,19 @@
 #!/usr/bin/env python
-# Download your tweets.
-# Requires `tweepy`.
+# Copyright 2012 Andrey Petrov
+#
+# This module is released under the MIT License:
+# http://www.opensource.org/licenses/mit-license.php
+'''
+Fetchtweets: Download thy tweets.
+(Requires tweepy)
+'''
+
+__version__ = '1.0'
 
 import tweepy
 import json
 import time
 import logging
-
 
 log = logging.getLogger(__name__)
 
@@ -75,7 +82,7 @@ def main(screen_name, out_filepath, tweet_id=None):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Download thy tweets.')
+    parser = argparse.ArgumentParser(description=__doc__.strip())
 
     parser.add_argument('screen_name', metavar='SCREEN_NAME',
                         help='Twitter account to fetch from.')
