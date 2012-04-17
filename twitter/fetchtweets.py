@@ -86,12 +86,12 @@ if __name__ == '__main__':
                         help='Twitter account to fetch from.')
 
     parser.add_argument('out_filepath', metavar='JSONS_FILE', default='out.jsons', nargs='?',
-                        help='File to resume writing to (will read the last tweet to set default of `tweet_id`).'
+                        help='File to resume writing to (will read the last tweet to set default of TWEET_ID). '
                              '[default: %(default)s]')
 
     parser.add_argument('tweet_id', metavar='TWEET_ID', type=int, default=None, nargs='?',
-                        help='Start fetching after this tweet'
-                             '[default: last tweet in `out_filepath`]')
+                        help='Start fetching after this tweet. '
+                             '[default: last tweet in JSONS_FILE]')
 
     parser.add_argument('--verbose', '-v', action='count')
 
