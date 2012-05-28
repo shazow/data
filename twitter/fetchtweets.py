@@ -15,32 +15,38 @@ import logging
 
 log = logging.getLogger(__name__)
 
-
 api = tweepy.API(retry_count=3, retry_delay=5)
 
+KEY_BLACKLIST = set([
+    'author', # Deprecated property?
+    'user', # Assume all tweets are by the same user.
+    '_api', # Unserializable property from tweepy.
+    'retweeted_status', # I forget why I'm blacklisting this. I'm sure I had my reasons at the time. :P
+    'id', # We use id_str instead.
+])
 
-def prune_keys(d):
+
+def prune_keys(d, blacklist=KEY_BLACKLIST):
     "Remove extraneous fields (empty, redundant, unserializable)."
-    prune_keys = ('author', 'user', '_api', 'created_at', 'retweeted_status', 'id')
-    return dict((k, v) for k, v in d.iteritems() if k not in prune_keys and v and not k.endswith('_id'))
+    return dict((k, v) for k, v in d.iteritems() if k not in blacklist and v and not k.endswith('_id'))
 
 
 def serialize_status(s):
     "Return a JSONifiable dict. Removes extraneous fields."
     d = prune_keys(s.__dict__)
-    d['created_at'] = time.mktime(s.created_at.timetuple())
+    d['created_at'] = time.mktime(s.created_at.timetuple()) # Override
     return d
 
 
 def tweets_lookup_since(screen_name, tweet_id=None):
     "Stores results in memory until final return in order to reverse them chronologically."
     r = []
-    for i, t in enumerate(tweepy.Cursor(api.user_timeline, screen_name=screen_name, count=200).items()):
-        if tweet_id and t.id_str <= str(tweet_id):
+    for i, status in enumerate(tweepy.Cursor(api.user_timeline, screen_name=screen_name, count=200).items()):
+        if tweet_id and status.id_str <= str(tweet_id):
             break
 
-        r.append(serialize_status(t))
-        log.info("[%d] Fetched (%d): %s", i, t.id, t.text)
+        r.append(serialize_status(status))
+        log.info("[%d] Fetched (%d): %s", i, status.id, status.text)
 
     for status in reversed(r):
         yield status
@@ -55,6 +61,10 @@ def write_from_iterable(iter_tweets, out_fp):
 def read_to_iterable(fp):
     for line in fp:
         yield json.loads(line)
+
+
+def reprocess_fp(fp_in, fp_out):
+    write_from_iterable((prune_keys(d) for d in read_to_iterable(fp_in)), fp_out)
 
 
 def main(screen_name, out_filepath, tweet_id=None):
