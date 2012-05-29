@@ -67,6 +67,15 @@ def reprocess_fp(fp_in, fp_out):
     write_from_iterable((prune_keys(d) for d in read_to_iterable(fp_in)), fp_out)
 
 
+def verify_integrity(fp):
+    current_id = 0
+    for i, d in enumerate(read_to_iterable(fp)):
+        id = int(d['id_str'])
+        if id < current_id:
+            print "Out-of-order id (%d) on line: %d" % (id, i)
+        current_id = id
+
+
 def main(screen_name, out_filepath, tweet_id=None):
     if not tweet_id:
         try:
